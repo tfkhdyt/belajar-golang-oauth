@@ -19,10 +19,8 @@ var ctx = context.Background()
 func main() {
 	app := fiber.New(fiber.Config{
 		ErrorHandler: func(ctx *fiber.Ctx, err error) error {
-			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
 
-			// Retrieve the custom status code if it's a *fiber.Error
 			var e *fiber.Error
 			if errors.As(err, &e) {
 				code = e.Code
