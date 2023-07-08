@@ -12,8 +12,6 @@ var JwtMiddleware = jwtware.New(jwtware.Config{
 	TokenLookup: "cookie:token,header:Authorization",
 	AuthScheme:  "Bearer",
 	ErrorHandler: func(c *fiber.Ctx, err error) error {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return fiber.NewError(fiber.StatusUnauthorized, err.Error())
 	},
 })
