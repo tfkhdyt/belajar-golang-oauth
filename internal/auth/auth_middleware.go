@@ -9,7 +9,8 @@ import (
 
 var JwtMiddleware = jwtware.New(jwtware.Config{
 	SigningKey:  jwtware.SigningKey{Key: []byte(jwtConfig.JwtSecretKey)},
-	TokenLookup: "cookie:token",
+	TokenLookup: "cookie:token,header:Authorization",
+	AuthScheme:  "Bearer",
 	ErrorHandler: func(c *fiber.Ctx, err error) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": err.Error(),
