@@ -34,8 +34,9 @@ func main() {
 		},
 	})
 
-	postService := post.NewPostRepositoryDummy()
+	postRepo := post.NewPostRepositoryDummy()
 
+	postService := post.NewPostService(postRepo)
 	authService := auth.NewAuthService(&ctx, &http.Client{})
 
 	indexHandler := index.NewIndexHandler()
