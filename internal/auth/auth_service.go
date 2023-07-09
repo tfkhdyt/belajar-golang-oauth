@@ -11,11 +11,12 @@ import (
 )
 
 type AuthService struct {
-	ctx *context.Context
+	ctx      *context.Context
+	userRepo user.UserRepository
 }
 
-func NewAuthService(ctx *context.Context) *AuthService {
-	return &AuthService{ctx}
+func NewAuthService(ctx *context.Context, userRepo user.UserRepository) *AuthService {
+	return &AuthService{ctx, userRepo}
 }
 
 func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, error) {
@@ -31,6 +32,12 @@ func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, 
 	var user user.User
 	if err := user.GetGitHubUserInfo(token); err != nil {
 		return nil, err
+	}
+
+	if _, err := a.userRepo.GetUserByID(user.ID); err != nil {
+		if _, errRegister := a.userRepo.Register(&user); errRegister != nil {
+			return nil, fiber.NewError(fiber.StatusInternalServerError, errRegister.Error())
+		}
 	}
 
 	jwtToken, errJwt := user.CreateNewJWT()

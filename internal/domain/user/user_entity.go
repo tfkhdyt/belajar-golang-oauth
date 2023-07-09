@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/oauth2"
+	"gorm.io/gorm"
 
 	jwtConfig "github.com/tfkhdyt/belajar-golang-oauth/internal/config/jwt"
 )
@@ -16,10 +17,10 @@ import (
 var httpClient = &http.Client{}
 
 type User struct {
-	Email     string `json:"email"`
+	gorm.Model
+	Name      string `json:"name" gorm:"not null"`
+	Email     string `json:"email" gorm:"not null;unique"`
 	AvatarURL string `json:"avatar_url"`
-	Name      string `json:"name"`
-	ID        uint   `json:"id"`
 }
 
 func (u *User) CreateNewJWT() (*string, error) {

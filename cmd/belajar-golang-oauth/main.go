@@ -9,8 +9,10 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 
 	"github.com/tfkhdyt/belajar-golang-oauth/internal/auth"
+	"github.com/tfkhdyt/belajar-golang-oauth/internal/db"
 	"github.com/tfkhdyt/belajar-golang-oauth/internal/index"
 	"github.com/tfkhdyt/belajar-golang-oauth/internal/post"
+	"github.com/tfkhdyt/belajar-golang-oauth/internal/user"
 )
 
 var ctx = context.Background()
@@ -32,9 +34,10 @@ func main() {
 	})
 
 	postRepo := post.NewPostRepositoryDummy()
+	userRepo := user.NewUserRepoPostgres(db.DB)
 
 	postService := post.NewPostService(postRepo)
-	authService := auth.NewAuthService(&ctx)
+	authService := auth.NewAuthService(&ctx, userRepo)
 
 	indexHandler := index.NewIndexHandler()
 	postHandler := post.NewPostHandler(postService)
