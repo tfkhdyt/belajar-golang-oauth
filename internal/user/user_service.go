@@ -25,10 +25,10 @@ func (u *UserService) Register(payload *user.RegisterRequest) (*user.RegisterRes
 
 	registeredUser, err := u.userRepo.Register(newUser)
 	if err != nil {
-		return nil, err
+		return nil, fiber.NewError(fiber.StatusInternalServerError, err.Error())
 	}
 
-	response := &user.RegisterResponse{
+	response := user.RegisterResponse{
 		ID:        registeredUser.ID,
 		Name:      registeredUser.Name,
 		Email:     registeredUser.Email,
@@ -36,5 +36,22 @@ func (u *UserService) Register(payload *user.RegisterRequest) (*user.RegisterRes
 		CreatedAt: registeredUser.CreatedAt,
 	}
 
-	return response, nil
+	return &response, nil
+}
+
+func (u *UserService) FindMyUserInfo(id uint) (*user.FindMyUserInfoResponse, error) {
+	myUserInfo, err := u.userRepo.FindUserByID(id)
+	if err != nil {
+		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
+	}
+
+	response := user.FindMyUserInfoResponse{}
+	response.ID = myUserInfo.ID
+	response.Name = myUserInfo.Name
+	response.Email = myUserInfo.Email
+	response.AvatarURL = myUserInfo.AvatarURL
+	response.CreatedAt = myUserInfo.CreatedAt
+	response.UpdatedAt = myUserInfo.UpdatedAt
+
+	return &response, nil
 }

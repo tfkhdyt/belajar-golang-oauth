@@ -38,17 +38,21 @@ func main() {
 
 	postService := post.NewPostService(postRepo)
 	authService := auth.NewAuthService(&ctx, userRepo)
+	userService := user.NewUserService(userRepo)
 
 	indexHandler := index.NewIndexHandler()
 	postHandler := post.NewPostHandler(postService)
 	authHandler := auth.NewAuthHandler(&ctx, authService)
+	userHandler := user.NewUserHandler(userService)
 
 	app.Get("/", indexHandler.Index)
 
 	app.Get("/auth/login/github", authHandler.GetGitHubLoginURL)
 	app.Get("/auth/callback/github", authHandler.HandleGitHubCallback)
 
-	app.Get("/posts", auth.JwtMiddleware, postHandler.GetAllPosts)
+	app.Get("/users/me", auth.JwtMiddleware, userHandler.FindMyUserInfo)
+
+	app.Get("/posts", auth.JwtMiddleware, postHandler.FindAllPosts)
 
 	log.Fatal(app.Listen(":8080"))
 }
