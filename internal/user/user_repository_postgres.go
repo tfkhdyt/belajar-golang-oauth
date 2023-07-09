@@ -22,7 +22,7 @@ func (u *userRepoPostgres) Register(user *user.User) (*user.User, error) {
 	return user, nil
 }
 
-func (u *userRepoPostgres) GetUserByID(id uint) (*user.User, error) {
+func (u *userRepoPostgres) FindUserByID(id uint) (*user.User, error) {
 	var user user.User
 	if err := u.db.First(&user).Error; err != nil {
 		return nil, err

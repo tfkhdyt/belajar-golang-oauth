@@ -34,7 +34,7 @@ func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, 
 		return nil, err
 	}
 
-	if _, err := a.userRepo.GetUserByID(user.ID); err != nil {
+	if _, err := a.userRepo.FindUserByID(user.ID); err != nil {
 		if _, errRegister := a.userRepo.Register(&user); errRegister != nil {
 			return nil, fiber.NewError(fiber.StatusInternalServerError, errRegister.Error())
 		}

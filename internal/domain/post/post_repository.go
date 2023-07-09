@@ -1,5 +1,5 @@
 package post
 
 type PostRepository interface {
-	GetAllPosts() ([]Post, error)
+	FindAllPosts() ([]Post, error)
 }

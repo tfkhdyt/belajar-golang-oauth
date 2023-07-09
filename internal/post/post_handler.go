@@ -14,8 +14,8 @@ func NewPostHandler(postRepo post.PostRepository) *PostHandler {
 	return &PostHandler{postRepo}
 }
 
-func (p *PostHandler) GetAllPosts(c *fiber.Ctx) error {
-	posts, err := p.postRepo.GetAllPosts()
+func (p *PostHandler) FindAllPosts(c *fiber.Ctx) error {
+	posts, err := p.postRepo.FindAllPosts()
 	if err != nil {
 		return err
 	}

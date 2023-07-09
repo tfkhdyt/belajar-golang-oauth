@@ -32,3 +32,8 @@ type RegisterResponse struct {
 	AvatarURL string    `json:"avatar_url"`
 	ID        uint      `json:"id"`
 }
+
+type FindMyUserInfoResponse struct {
+	UpdatedAt time.Time `json:"updated_at"`
+	RegisterResponse
+}

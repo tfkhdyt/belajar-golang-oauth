@@ -10,6 +10,6 @@ func NewPostService(postRepo post.PostRepository) *PostService {
 	return &PostService{postRepo}
 }
 
-func (p *PostService) GetAllPosts() ([]post.Post, error) {
-	return p.postRepo.GetAllPosts()
+func (p *PostService) FindAllPosts() ([]post.Post, error) {
+	return p.postRepo.FindAllPosts()
 }

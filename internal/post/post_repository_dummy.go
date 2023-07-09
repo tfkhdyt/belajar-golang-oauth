@@ -8,7 +8,7 @@ func NewPostRepositoryDummy() post.PostRepository {
 	return &postRepoDummy{}
 }
 
-func (p *postRepoDummy) GetAllPosts() ([]post.Post, error) {
+func (p *postRepoDummy) FindAllPosts() ([]post.Post, error) {
 	posts := []post.Post{
 		{
 			ID:    "post-1",
