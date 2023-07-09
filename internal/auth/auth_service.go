@@ -2,9 +2,6 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
-	"io"
-	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/oauth2"
@@ -14,12 +11,11 @@ import (
 )
 
 type AuthService struct {
-	ctx        *context.Context
-	httpClient *http.Client
+	ctx *context.Context
 }
 
-func NewAuthService(ctx *context.Context, httpClient *http.Client) *AuthService {
-	return &AuthService{ctx, httpClient}
+func NewAuthService(ctx *context.Context) *AuthService {
+	return &AuthService{ctx}
 }
 
 func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, error) {
@@ -32,9 +28,9 @@ func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, 
 		return nil, err
 	}
 
-	user, errGitHubInfo := a.getGitHubUserInfo(token)
-	if errGitHubInfo != nil {
-		return nil, errGitHubInfo
+	var user user.User
+	if err := user.GetGitHubUserInfo(token); err != nil {
+		return nil, err
 	}
 
 	jwtToken, errJwt := user.CreateNewJWT()
@@ -52,29 +48,4 @@ func (a *AuthService) getGitHubToken(code string) (*oauth2.Token, error) {
 	}
 
 	return token, nil
-}
-
-func (a *AuthService) getGitHubUserInfo(token *oauth2.Token) (*user.User, error) {
-	req, errNewRequest := http.NewRequest("GET", "https://api.github.com/user", nil)
-	if errNewRequest != nil {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to setup new request")
-	}
-	req.Header.Set("Authorization", "Bearer "+token.AccessToken)
-
-	response, errGet := a.httpClient.Do(req)
-	if errGet != nil {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to get github user info")
-	}
-
-	responseData, errRead := io.ReadAll(response.Body)
-	if errRead != nil {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to read response body")
-	}
-
-	var user user.User
-	if err := json.Unmarshal(responseData, &user); err != nil {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to unmarshal response")
-	}
-
-	return &user, nil
 }

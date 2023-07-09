@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/joho/godotenv/autoload"
@@ -35,7 +34,7 @@ func main() {
 	postRepo := post.NewPostRepositoryDummy()
 
 	postService := post.NewPostService(postRepo)
-	authService := auth.NewAuthService(&ctx, &http.Client{})
+	authService := auth.NewAuthService(&ctx)
 
 	indexHandler := index.NewIndexHandler()
 	postHandler := post.NewPostHandler(postService)
