@@ -15,11 +15,17 @@ type AuthService struct {
 	userRepo user.UserRepository
 }
 
-func NewAuthService(ctx *context.Context, userRepo user.UserRepository) *AuthService {
+func NewAuthService(
+	ctx *context.Context,
+	userRepo user.UserRepository,
+) *AuthService {
 	return &AuthService{ctx, userRepo}
 }
 
-func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, error) {
+func (a *AuthService) HandleGitHubCallback(
+	code string,
+	state string,
+) (*string, error) {
 	if state != oauth.RandomState {
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "Invalid state")
 	}
@@ -36,7 +42,10 @@ func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, 
 
 	if _, err := a.userRepo.FindUserByID(user.ID); err != nil {
 		if _, errRegister := a.userRepo.Register(&user); errRegister != nil {
-			return nil, fiber.NewError(fiber.StatusInternalServerError, errRegister.Error())
+			return nil, fiber.NewError(
+				fiber.StatusInternalServerError,
+				errRegister.Error(),
+			)
 		}
 	}
 
@@ -51,7 +60,10 @@ func (a *AuthService) HandleGitHubCallback(code string, state string) (*string, 
 func (a *AuthService) getGitHubToken(code string) (*oauth2.Token, error) {
 	token, err := oauth.GithubOauthConfig.Exchange(*a.ctx, code)
 	if err != nil {
-		return nil, fiber.NewError(fiber.StatusUnauthorized, "Failed to get github token")
+		return nil, fiber.NewError(
+			fiber.StatusUnauthorized,
+			"Failed to get github token",
+		)
 	}
 
 	return token, nil

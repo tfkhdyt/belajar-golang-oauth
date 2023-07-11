@@ -14,14 +14,20 @@ type AuthHandler struct {
 	authService *AuthService
 }
 
-func NewAuthHandler(ctx *context.Context, authService *AuthService) *AuthHandler {
+func NewAuthHandler(
+	ctx *context.Context,
+	authService *AuthService,
+) *AuthHandler {
 	return &AuthHandler{ctx, authService}
 }
 
 func (a *AuthHandler) GetGitHubLoginURL(c *fiber.Ctx) error {
 	url := oauth.GithubOauthConfig.AuthCodeURL(oauth.RandomState)
 	if url == "" {
-		return fiber.NewError(fiber.StatusUnauthorized, "Failed to get github login url")
+		return fiber.NewError(
+			fiber.StatusUnauthorized,
+			"Failed to get github login url",
+		)
 	}
 
 	return c.Redirect(url, fiber.StatusTemporaryRedirect)

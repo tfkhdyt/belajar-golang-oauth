@@ -16,10 +16,15 @@ func NewUserService(userRepo user.UserRepository) *UserService {
 	return &UserService{userRepo}
 }
 
-func (u *UserService) Register(payload *user.RegisterRequest) (*user.RegisterResponse, error) {
+func (u *UserService) Register(
+	payload *user.RegisterRequest,
+) (*user.RegisterResponse, error) {
 	if err := payload.Validate(); err != nil {
 		log.Println(err)
-		return nil, fiber.NewError(fiber.StatusUnprocessableEntity, "Request body is not valid")
+		return nil, fiber.NewError(
+			fiber.StatusUnprocessableEntity,
+			"Request body is not valid",
+		)
 	}
 	newUser := payload.ToEntity()
 
@@ -39,7 +44,9 @@ func (u *UserService) Register(payload *user.RegisterRequest) (*user.RegisterRes
 	return &response, nil
 }
 
-func (u *UserService) FindMyUserInfo(id uint) (*user.FindMyUserInfoResponse, error) {
+func (u *UserService) FindMyUserInfo(
+	id uint,
+) (*user.FindMyUserInfoResponse, error) {
 	myUserInfo, err := u.userRepo.FindUserByID(id)
 	if err != nil {
 		return nil, fiber.NewError(fiber.StatusNotFound, err.Error())
